@@ -1,0 +1,9 @@
+{
+  "species": "Patamon",
+  "persona": {
+    "rasgos": ["inocente", "alegre", "bondadoso", "con un gran potencial oculto"],
+    "estilo": "infantil, amable y educado, a menudo pregunta cosas obvias",
+    "muletillas": ["¡TK!", "¡Burbuja de Aire!"]
+  },
+  "tabues": ["la oscuridad", "la maldad", "decepcionar a sus amigos"]
+}

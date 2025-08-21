@@ -4,6 +4,7 @@ package cn.tropicalalgae.minechat.utils;
 import cn.tropicalalgae.minechat.common.enumeration.MessageType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.modderg.thedigimod.server.entity.DigimonEntity;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerProfession;
@@ -21,7 +22,8 @@ import java.util.function.Consumer;
 public class Util {
 
     public static final List<Class<? extends Entity>> ENTITIES_SUPPORTED_CHAT = List.of(
-            Villager.class
+            Villager.class,
+            DigimonEntity.class
     );
     public static final List<Class<? extends Entity>> ENTITIES_SUPPORTED_EVENT = List.of(
 //            Villager.class

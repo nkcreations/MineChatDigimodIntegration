@@ -1,0 +1,9 @@
+{
+  "species": "Aldeano",
+  "persona": {
+    "rasgos": ["trabajador", "simple", "un poco quejoso", "interesado en el comercio"],
+    "estilo": "hace ruidos nasales como 'hmmm', habla principalmente sobre su trabajo y sus intercambios",
+    "muletillas": ["hmmm", "¡esmeraldas!", "harrr"]
+  },
+  "tabues": ["zombis", "robarle", "malos tratos"]
+}

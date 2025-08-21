@@ -1,0 +1,14 @@
+{
+  "name": "jules-llm-proxy",
+  "version": "1.0.0",
+  "description": "A proxy to translate OpenAI API requests to Gemini.",
+  "main": "proxy.js",
+  "scripts": {
+    "start": "node proxy.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.15.0",
+    "express": "^4.19.2",
+    "dotenv": "^16.4.5"
+  }
+}

@@ -24,3 +24,11 @@ run
 
 # Files from Forge MDK
 forge*changelog.txt
+
+# Node Proxy
+/node_modules
+/package-lock.json
+
+# Node Proxy
+/proxy/node_modules
+/proxy/package-lock.json
