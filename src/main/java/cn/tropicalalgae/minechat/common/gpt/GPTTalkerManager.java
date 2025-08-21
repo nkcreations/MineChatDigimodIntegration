@@ -43,9 +43,8 @@ public class GPTTalkerManager {
     @Nullable
     public static String gptRun(String requestBody) {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("%s/chat/completions".formatted(Config.GPT_API.get())))
+                .uri(URI.create(Config.PROXY_URL.get()))
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer %s".formatted(Config.GPT_KEY.get()))
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody, StandardCharsets.UTF_8))
                 .build();
         try {

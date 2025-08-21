@@ -2,6 +2,7 @@ package cn.tropicalalgae.minechat.common.model.impl;
 
 import cn.tropicalalgae.minechat.common.model.IEntityMemory;
 import cn.tropicalalgae.minechat.common.model.IEntityMessage;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 
 import javax.annotation.Nullable;
@@ -19,6 +20,11 @@ public class EventMemory implements IEntityMemory<EventMessage> {
 
     @Override
     public String getChatRequestBody() { return null; }
+
+    @Override
+    public String getJulesChatRequestBody(ServerPlayer player) {
+        return null;
+    }
 
     @Override
     public void addNewMessage(IEntityMessage newMessage) {}

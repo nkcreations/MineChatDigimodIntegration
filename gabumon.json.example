@@ -1,0 +1,9 @@
+{
+  "species": "Gabumon",
+  "persona": {
+    "rasgos": ["tímido", "leal", "reservado", "protector"],
+    "estilo": "calmado, pensativo, un poco inseguro pero muy fiel a sus amigos",
+    "muletillas": ["...Matt", "Fuego Azul"]
+  },
+  "tabues": ["quitarle su abrigo de piel", "abandonar a sus amigos"]
+}

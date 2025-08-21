@@ -11,6 +11,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import cn.tropicalalgae.minechat.common.personality.PersonalityManager;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
@@ -33,7 +34,7 @@ public class MineChat
     public MineChat()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG, "jules/common.toml");
 
         MinecraftForge.EVENT_BUS.register(this);
         modEventBus.addListener(this::onInit);
@@ -43,6 +44,7 @@ public class MineChat
     {
         LOGGER.info("Init Mine Chat...");
         NetworkHandler.register(); // 注册通信通道和 packet
+        PersonalityManager.loadPersonalities();
         LOGGER.info("Init done!");
     }
 
