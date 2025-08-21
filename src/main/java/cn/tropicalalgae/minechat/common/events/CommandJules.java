@@ -40,16 +40,20 @@ public class CommandJules {
                 .requires(source -> source.hasPermission(2))
                 .then(Commands.literal("set")
                     .then(Commands.argument("species", StringArgumentType.word())
-                    .then(Commands.argument("key", StringArgumentType.word())
-                    .then(Commands.argument("value", StringArgumentType.greedyString())
-                    .executes(context -> {
-                        // This is complex to implement safely. For now, just confirm it works.
-                        String species = StringArgumentType.getString(context, "species");
-                        String key = StringArgumentType.getString(context, "key");
-                        String value = StringArgumentType.getString(context, "value");
-                        context.getSource().sendSuccess(() -> Component.literal("Comando recibido: " + species + " " + key + " " + value), true);
-                        return 1;
-                    }))))
+                        .then(Commands.argument("key", StringArgumentType.word())
+                            .then(Commands.argument("value", StringArgumentType.greedyString())
+                                .executes(context -> {
+                                    // This is complex to implement safely. For now, just confirm it works.
+                                    String species = StringArgumentType.getString(context, "species");
+                                    String key = StringArgumentType.getString(context, "key");
+                                    String value = StringArgumentType.getString(context, "value");
+                                    context.getSource().sendSuccess(() -> Component.literal("Comando recibido: " + species + " " + key + " " + value), true);
+                                    return 1;
+                                })
+                            )
+                        )
+                    )
+                )
             )
         );
     }
