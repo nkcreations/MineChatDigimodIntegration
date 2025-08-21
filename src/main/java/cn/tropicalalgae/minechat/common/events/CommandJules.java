@@ -33,8 +33,7 @@ public class CommandJules {
                         context.getSource().sendSuccess(() -> Component.literal("Toda la memoria de relaciones de Jules ha sido borrada."), true);
                         return 1;
                     })
-                )
-            )
+                ))
             // Placeholder for persona command
             .then(Commands.literal("persona")
                 .requires(source -> source.hasPermission(2))
