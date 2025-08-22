@@ -2,18 +2,21 @@ package cn.tropicalalgae.minechat.common.personality;
 
 import cn.tropicalalgae.minechat.MineChat;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PersonalityManager {
     private static final Map<String, Personality> personalities = new HashMap<>();
-    private static final Personality defaultPersonality = new Personality();
     private static final Path CONFIG_DIR = FMLPaths.CONFIGDIR.get().resolve("jules");
 
     public static void loadPersonalities() {
@@ -40,18 +43,40 @@ public class PersonalityManager {
                 MineChat.LOGGER.error("Failed to load personality file: " + file.getName(), e);
             }
         }
-
-        // Setup default personality
-        defaultPersonality.species = "default";
-        defaultPersonality.persona = new Personality.Persona();
-        defaultPersonality.persona.rasgos = new ArrayList<>();
-        defaultPersonality.persona.rasgos.add("neutral");
-        defaultPersonality.persona.estilo = "directo y simple";
-        defaultPersonality.persona.muletillas = new ArrayList<>();
-        defaultPersonality.tabues = new ArrayList<>();
     }
 
     public static Personality getPersonality(String species) {
-        return personalities.getOrDefault(species.toLowerCase(), defaultPersonality);
+        String speciesKey = species.toLowerCase();
+        if (!personalities.containsKey(speciesKey)) {
+            MineChat.LOGGER.info("No personality file found for " + species + ". Creating a default one.");
+            return createAndLoadPersonalityFile(species);
+        }
+        return personalities.get(speciesKey);
+    }
+
+    private static Personality createAndLoadPersonalityFile(String species) {
+        Personality defaultPersonality = new Personality();
+        defaultPersonality.species = species;
+        defaultPersonality.persona = new Personality.Persona();
+        defaultPersonality.persona.rasgos = new ArrayList<>(List.of("neutral"));
+        defaultPersonality.persona.estilo = "directo y simple";
+        defaultPersonality.persona.muletillas = new ArrayList<>();
+        defaultPersonality.tabues = new ArrayList<>();
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        File personalityFile = CONFIG_DIR.resolve(species.toLowerCase() + ".json").toFile();
+
+        try (FileWriter writer = new FileWriter(personalityFile)) {
+            gson.toJson(defaultPersonality, writer);
+            MineChat.LOGGER.info("Created default personality file at: " + personalityFile.getAbsolutePath());
+        } catch (IOException e) {
+            MineChat.LOGGER.error("Failed to create default personality file for " + species, e);
+            // Return an in-memory default without saving if file creation fails
+            return defaultPersonality;
+        }
+
+        // Add to the map and return it
+        personalities.put(species.toLowerCase(), defaultPersonality);
+        return defaultPersonality;
     }
 }
