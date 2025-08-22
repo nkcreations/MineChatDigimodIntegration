@@ -6,6 +6,8 @@ import cn.tropicalalgae.minechat.common.model.IEntityMemory;
 import cn.tropicalalgae.minechat.common.model.impl.ChatMessage;
 import cn.tropicalalgae.minechat.common.persistence.JulesSavedData;
 import cn.tropicalalgae.minechat.common.persistence.RelationshipData;
+import cn.tropicalalgae.minechat.network.DisplayBubblePacket;
+import cn.tropicalalgae.minechat.network.NetworkHandler;
 import cn.tropicalalgae.minechat.utils.Config;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -68,11 +70,6 @@ public class GPTTextTalker implements Runnable {
         return new Gson().toJson(root);
     }
 
-    private void messageBroadcast(Component replyComp) {
-        for (ServerPlayer player : this.server.getPlayerList().getPlayers()) {
-            player.sendSystemMessage(replyComp);
-        }
-    }
 
     @NotNull
     private Boolean canReceiverTalk() {
@@ -125,7 +122,6 @@ public class GPTTextTalker implements Runnable {
             String rawJsonReply = gptRun(requestBody);
 
             // Update memory (model's message)
-            Component replyComp;
             if (rawJsonReply != null) {
                 try {
                     // Store the full JSON response in the history
@@ -143,7 +139,8 @@ public class GPTTextTalker implements Runnable {
                     relationshipData.adjustRelationshipScore(relationshipDelta);
                     savedData.setDirty();
 
-                    replyComp = Component.literal("<%s>: %s".formatted(getEntityCustomName(this.receiver), displayText));
+                    // Send the display text to the original player to be shown as a speech bubble
+                    NetworkHandler.sendToPlayer(new DisplayBubblePacket(this.receiver.getId(), displayText), this.sender);
 
                     // TODO: Process actions from replyJson.get("actions") in a later step
                     if (replyJson.has("actions")) {
@@ -166,16 +163,13 @@ public class GPTTextTalker implements Runnable {
                     }
                 } catch (Exception e) {
                     LOGGER.error("Failed to parse LLM JSON response: " + rawJsonReply, e);
-                    replyComp = Component.literal("[ERROR] Failed to parse LLM response.").withStyle(Style.EMPTY.withColor(ChatFormatting.RED));
+                    NetworkHandler.sendToPlayer(new DisplayBubblePacket(this.receiver.getId(), "[Error parsing response]"), this.sender);
                 }
             } else {
                 // Handle inference failure
-                String errorReply = "[ERROR] MineChat inference failed. Please check your config!";
-                replyComp = Component.literal(errorReply).withStyle(Style.EMPTY.withColor(ChatFormatting.RED));
                 LOGGER.error("Error for model inference, latest message: %s".formatted(this.message));
+                NetworkHandler.sendToPlayer(new DisplayBubblePacket(this.receiver.getId(), "[Error receiving response]"), this.sender);
             }
-            // Broadcast message
-            messageBroadcast(replyComp);
         }
     }
 

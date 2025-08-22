@@ -5,6 +5,7 @@ import cn.tropicalalgae.minechat.network.packets.SendGPTRequestPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
@@ -31,9 +32,19 @@ public class NetworkHandler {
                 PlayerChatPacket::new,
                 PlayerChatPacket::handle
         );
+        INSTANCE.registerMessage(index++,
+                DisplayBubblePacket.class,
+                DisplayBubblePacket::toBytes,
+                DisplayBubblePacket::new,
+                DisplayBubblePacket::handle
+        );
     }
 
     public static void sendToServer(Object msg) {
         INSTANCE.send(PacketDistributor.SERVER.with(() -> null), msg);
+    }
+
+    public static void sendToPlayer(Object msg, ServerPlayer player) {
+        INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), msg);
     }
 }
