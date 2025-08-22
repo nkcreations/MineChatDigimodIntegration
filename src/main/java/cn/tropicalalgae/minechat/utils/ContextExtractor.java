@@ -70,4 +70,17 @@ public class ContextExtractor {
         }
         return "No aplicable";
     }
+
+    public static String getVillagerProfession(Entity entity) {
+        if (entity instanceof Villager villager) {
+            return villager.getVillagerData().getProfession().toString();
+        }
+        return "No aplicable";
+    }
+
+    public static String getStructureContext(Entity entity) {
+        // We can reuse the EnvironmentScanner logic here.
+        // Let's use a smaller radius for general context.
+        return EnvironmentScanner.findNearestStructure(entity, 128);
+    }
 }
