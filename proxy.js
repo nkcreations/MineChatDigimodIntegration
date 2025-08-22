@@ -10,16 +10,24 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 app.post('/v1/chat/completions', async (req, res) => {
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+        const requestedModel = req.body.model || "gemini-1.5-flash-latest";
+        const model = genAI.getGenerativeModel({ model: requestedModel });
 
-        // The Minecraft mod sends a full message history.
-        // We need to adapt this to Gemini's format.
-        // Gemini expects a `history` array of alternating user/model roles, and a final `msg` for the new prompt.
         const openAI_messages = req.body.messages || [];
 
-        // Find the system prompt
-        const systemPrompt = openAI_messages.find(m => m.role === 'system');
+        const systemPromptFull = openAI_messages.find(m => m.role === 'system')?.content || "";
         const chatMessages = openAI_messages.filter(m => m.role !== 'system');
+
+        // Separate the core instruction from the detailed context
+        const contextMarker = "CONTEXTO:";
+        const parts = systemPromptFull.split(contextMarker);
+        const systemInstruction = parts[0].replace("[SYSTEM]", "").trim();
+        const detailedContext = parts.length > 1 ? `${contextMarker}${parts[1]}` : "";
+
+        // Prepend the detailed context to the first user message if it exists
+        if (chatMessages.length > 0 && chatMessages[0].role === 'user' && detailedContext) {
+            chatMessages[0].content = `${detailedContext}\n\n${chatMessages[0].content}`;
+        }
 
         const history = chatMessages.slice(0, -1).map(msg => ({
             role: msg.role === 'assistant' ? 'model' : 'user',
@@ -34,35 +42,33 @@ app.post('/v1/chat/completions', async (req, res) => {
         const chat = model.startChat({
             history: history,
             generationConfig: {
-                responseMimeType: "application/json", // Crucial for structured output
+                responseMimeType: "application/json",
                 maxOutputTokens: 2048,
             },
-            // The system instruction is a special field in Gemini
-            systemInstruction: systemPrompt ? systemPrompt.content : "You are a helpful assistant.",
+            systemInstruction: systemInstruction,
         });
 
         const result = await chat.sendMessage(lastMessage.content);
         const response = await result.response;
         const geminiContent = response.text();
 
-        // Translate the Gemini response back to OpenAI format
         const openAIResponse = {
             id: `chatcmpl-${Date.now()}`,
             object: "chat.completion",
             created: Math.floor(Date.now() / 1000),
-            model: "gemini-1.5-flash-latest",
+            model: requestedModel,
             choices: [{
                 index: 0,
                 message: {
                     role: "assistant",
-                    content: geminiContent, // This will be the stringified JSON
+                    content: geminiContent,
                 },
                 finish_reason: "stop",
             }],
             usage: {
-                prompt_tokens: 0, // Placeholder
-                completion_tokens: 0, // Placeholder
-                total_tokens: 0, // Placeholder
+                prompt_tokens: 0,
+                completion_tokens: 0,
+                total_tokens: 0,
             },
         };
 
@@ -70,7 +76,8 @@ app.post('/v1/chat/completions', async (req, res) => {
 
     } catch (error) {
         console.error("Error processing request:", error);
-        res.status(500).json({ error: "Internal server error" });
+        const errorDetails = error.errorDetails || [{ message: error.message }];
+        res.status(500).json({ error: "Internal server error", details: errorDetails });
     }
 });
 

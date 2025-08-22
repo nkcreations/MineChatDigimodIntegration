@@ -61,6 +61,7 @@ public class ChatMemory implements IEntityMemory<ChatMessage> {
         - Jugador: {playerName}, pos {playerPos}, inventario (muestras): {playerItems}, reputación previa: {relationScore}
         - Mundo: bioma {biome}, hora {timeOfDay}, clima {weather}
         - Digimon: {digimonStats}
+        - Vision: {vision}
         - Restricciones: {tabues}
         - Umbrales: warn≤–20, angry≤–40, attack≤–60, friendly≥+40, loyal≥+70 (ver REGLAS)
 
@@ -83,6 +84,19 @@ public class ChatMemory implements IEntityMemory<ChatMessage> {
         JulesSavedData savedData = JulesSavedData.get(player.serverLevel());
         int relationshipScore = savedData.getRelationship(player.getUUID(), this.entity.getUUID()).getRelationshipScore();
 
+        StringBuilder visionBuilder = new StringBuilder();
+        if (Config.VISION_ENABLED.get()) {
+            String blocks = EnvironmentScanner.scanNearbyBlocks(this.entity, Config.VISION_RADIUS.get());
+            String entities = EnvironmentScanner.scanNearbyEntities(this.entity, Config.VISION_RADIUS.get());
+            visionBuilder.append("Veo bloques de ").append(blocks).append(". ");
+            visionBuilder.append("Cerca hay ").append(entities).append(". ");
+        }
+        if (Config.DUNGEON_DETECTION_ENABLED.get()) {
+            String structure = EnvironmentScanner.findNearestStructure(this.entity, Config.VISION_RADIUS.get() * 4);
+            visionBuilder.append("Detecto ").append(structure).append(".");
+        }
+        String visionText = visionBuilder.length() > 0 ? visionBuilder.toString() : "nada relevante.";
+
         String systemPrompt = systemPromptTemplate
                 .replace("{entityName}", getEntityCustomName(this.entity))
                 .replace("{species}", species)
@@ -95,6 +109,7 @@ public class ChatMemory implements IEntityMemory<ChatMessage> {
                 .replace("{timeOfDay}", ContextExtractor.getTimeOfDay(world))
                 .replace("{weather}", ContextExtractor.getWeather(world))
                 .replace("{digimonStats}", ContextExtractor.getDigimonStats(this.entity))
+                .replace("{vision}", visionText)
                 .replace("{tabues}", tabues)
                 .replace("{muletillas}", muletillas);
 

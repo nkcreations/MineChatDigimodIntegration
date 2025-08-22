@@ -35,6 +35,11 @@ public class Config {
     public static ForgeConfigSpec.IntValue THRESHOLD_FRIENDLY;
     public static ForgeConfigSpec.IntValue THRESHOLD_LOYAL;
 
+    public static ForgeConfigSpec.BooleanValue VISION_ENABLED;
+    public static ForgeConfigSpec.BooleanValue DUNGEON_DETECTION_ENABLED;
+    public static ForgeConfigSpec.IntValue VISION_RADIUS;
+    public static ForgeConfigSpec.DoubleValue TEMPERATURE;
+
 
     public enum LLMProvider {
         GEMINI, OPENAI, LOCAL
@@ -66,6 +71,22 @@ public class Config {
                 .comment("Max context length for each chat")
                 .define("context_length", 8);
 
+        TEMPERATURE = builder
+                .comment("Controls randomness. Lower is more predictable. 0.0 to 1.0")
+                .defineInRange("temperature", 0.9, 0.0, 1.0);
+
+        builder.pop();
+
+        builder.comment("Vision Configuration").push("vision");
+        VISION_ENABLED = builder
+                .comment("Enable the ability for entities to 'see' nearby blocks and entities.")
+                .define("vision_enabled", true);
+        DUNGEON_DETECTION_ENABLED = builder
+                .comment("Enable the ability for entities to detect nearby structures.")
+                .define("dungeon_detection_enabled", true);
+        VISION_RADIUS = builder
+                .comment("The radius (in blocks) for vision scanning.")
+                .defineInRange("vision_radius", 16, 4, 64);
         builder.pop();
 
         builder.comment("Relationship Thresholds").push("thresholds");
