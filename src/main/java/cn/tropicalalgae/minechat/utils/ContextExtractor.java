@@ -46,19 +46,8 @@ public class ContextExtractor {
         return "despejado";
     }
 
-    public static String getEntitySpecies(Entity entity) {
-        if (entity instanceof Villager) {
-            return "Aldeano";
-        }
-        if (entity instanceof DigimonEntity) {
-            // This is a placeholder. We'll need a way to get the actual species name.
-            return "Digimon";
-        }
-        return "desconocido";
-    }
-
     public static String getDigimonStats(Entity entity) {
-        if (entity instanceof DigimonEntity) {
+        if (Util.getEntitySpecies(entity).equals("Digimon")) {
             // Placeholder values. These would be replaced with actual API calls to the DigimonEntity object.
             String level = "5";
             String hunger = "saciado";

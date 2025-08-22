@@ -37,7 +37,7 @@ public class ChatMemory implements IEntityMemory<ChatMessage> {
         JsonArray messages = new JsonArray();
 
         // 1. System Prompt
-        String species = ContextExtractor.getEntitySpecies(this.entity);
+        String species = Util.getEntitySpecies(this.entity);
         Personality personality = PersonalityManager.getPersonality(species);
 
         String estilo_persona = personality.persona.estilo;

@@ -4,7 +4,6 @@ package cn.tropicalalgae.minechat.utils;
 import cn.tropicalalgae.minechat.common.enumeration.MessageType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.modderg.thedigimod.server.entity.DigimonEntity;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerProfession;
@@ -22,8 +21,7 @@ import java.util.function.Consumer;
 public class Util {
 
     public static final List<Class<? extends Entity>> ENTITIES_SUPPORTED_CHAT = List.of(
-            Villager.class,
-            DigimonEntity.class
+            Villager.class
     );
     public static final List<Class<? extends Entity>> ENTITIES_SUPPORTED_EVENT = List.of(
 //            Villager.class
@@ -101,23 +99,19 @@ public class Util {
     }
 
     public static boolean isEntitySupported(Entity entity, MessageType messageType) {
-        /* 判断是否是适用文本交流的实体 */
-        if (entity == null | messageType == null | !Config.MOD_ENABLE.get()) {
+        if (entity == null || messageType == null || !Config.MOD_ENABLE.get()) {
             return false;
         }
-        switch (messageType) {
-            case CHAT -> {
-                return ENTITIES_SUPPORTED_CHAT.stream()
-                        .anyMatch(clazz -> clazz.isAssignableFrom(entity.getClass()));
-            }
-            case EVENT -> {
-                return ENTITIES_SUPPORTED_EVENT.stream()
-                        .anyMatch(clazz -> clazz.isAssignableFrom(entity.getClass()));
-            }
-            default -> {
-                return false;
-            }
+
+        boolean isDigimon = entity.getClass().getName().contains("thedigimod");
+
+        if (messageType == MessageType.CHAT) {
+            boolean isSupportedVanilla = ENTITIES_SUPPORTED_CHAT.stream()
+                    .anyMatch(clazz -> clazz.isAssignableFrom(entity.getClass()));
+            return isSupportedVanilla || isDigimon;
         }
+        // Handle other message types if necessary
+        return false;
     }
 
     public static Boolean canPlayerTalkToEntity(String playerName) {
@@ -133,6 +127,19 @@ public class Util {
     }
 
     @Nullable
+    public static String getEntitySpecies(Entity entity) {
+        if (entity instanceof Villager) {
+            return "Aldeano";
+        }
+        if (entity.getClass().getName().contains("thedigimod")) {
+            // This is a placeholder. A more robust solution might try to get a more specific name.
+            // For now, we'll use a generic name that the PersonalityManager can key off of.
+            // A future improvement could be to parse the entity's registry name.
+            return "Digimon";
+        }
+        return "desconocido";
+    }
+
     public static String getEntityPrompt(Entity entity) {
         if (entity instanceof Villager villager) {
             VillagerProfession profession = villager.getVillagerData().getProfession();
