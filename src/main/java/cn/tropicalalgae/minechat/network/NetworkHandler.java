@@ -25,6 +25,12 @@ public class NetworkHandler {
                 SendGPTRequestPacket::new,
                 SendGPTRequestPacket::handle
         );
+        INSTANCE.registerMessage(index++,
+                PlayerChatPacket.class,
+                PlayerChatPacket::toBytes,
+                PlayerChatPacket::new,
+                PlayerChatPacket::handle
+        );
     }
 
     public static void sendToServer(Object msg) {

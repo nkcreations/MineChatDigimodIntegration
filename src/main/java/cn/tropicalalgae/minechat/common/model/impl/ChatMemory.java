@@ -7,6 +7,7 @@ import cn.tropicalalgae.minechat.common.personality.Personality;
 import cn.tropicalalgae.minechat.common.personality.PersonalityManager;
 import cn.tropicalalgae.minechat.utils.Config;
 import cn.tropicalalgae.minechat.utils.ContextExtractor;
+import cn.tropicalalgae.minechat.utils.EnvironmentScanner;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.server.level.ServerPlayer;
