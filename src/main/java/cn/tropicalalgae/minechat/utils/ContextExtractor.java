@@ -2,6 +2,7 @@ package cn.tropicalalgae.minechat.utils;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -51,7 +52,10 @@ public class ContextExtractor {
             String level = "5";
             String hunger = "saciado";
             String mood = "neutral";
-            String hp = String.format("%.0f/%.0f", ((DigimonEntity) entity).getHealth(), ((DigimonEntity) entity).getMaxHealth());
+            String hp = "desconocido";
+            if (entity instanceof LivingEntity livingEntity) {
+                hp = String.format("%.0f/%.0f", livingEntity.getHealth(), livingEntity.getMaxHealth());
+            }
             String evoLine = "desconocido";
             return String.format("Nivel: %s, Hambre: %s, Humor: %s, Salud: %s, Línea Evolutiva: %s",
                     level, hunger, mood, hp, evoLine);

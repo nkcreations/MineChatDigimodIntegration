@@ -6,6 +6,7 @@ import cn.tropicalalgae.minechat.common.persistence.JulesSavedData;
 import cn.tropicalalgae.minechat.common.personality.Personality;
 import cn.tropicalalgae.minechat.common.personality.PersonalityManager;
 import cn.tropicalalgae.minechat.utils.Config;
+import cn.tropicalalgae.minechat.utils.Util;
 import cn.tropicalalgae.minechat.utils.ContextExtractor;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -16,7 +17,9 @@ import net.minecraft.world.level.Level;
 import java.util.*;
 
 import static cn.tropicalalgae.minechat.common.gpt.GPTTalkerManager.buildRequestBody;
-import static cn.tropicalalgae.minechat.utils.Util.*;
+import static cn.tropicalalgae.minechat.utils.Util.getEntityCustomName;
+import static cn.tropicalalgae.minechat.utils.Util.getEntityPrompt;
+import static cn.tropicalalgae.minechat.utils.Util.SYS_PROMPT_SUFFIX;
 
 
 public class ChatMemory implements IEntityMemory<ChatMessage> {
