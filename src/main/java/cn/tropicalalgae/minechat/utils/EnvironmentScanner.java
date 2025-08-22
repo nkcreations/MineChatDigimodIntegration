@@ -79,9 +79,9 @@ public class EnvironmentScanner {
         }
 
         List<TagKey<Structure>> tagsToSearch = List.of(
-            TagKey.create(Registries.STRUCTURE, new ResourceLocation("minecraft:village")),
-            TagKey.create(Registries.STRUCTURE, new ResourceLocation("minecraft:ruined_portal")),
-            TagKey.create(Registries.STRUCTURE, new ResourceLocation("minecraft:mineshaft"))
+            TagKey.create(Registries.STRUCTURE, new ResourceLocation("minecraft", "village")),
+            TagKey.create(Registries.STRUCTURE, new ResourceLocation("minecraft", "ruined_portal")),
+            TagKey.create(Registries.STRUCTURE, new ResourceLocation("minecraft", "mineshaft"))
         );
 
         BlockPos centerPos = center.blockPosition();
