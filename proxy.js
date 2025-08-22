@@ -31,14 +31,19 @@ app.post('/v1/chat/completions', async (req, res) => {
             return res.status(400).json({ error: "Last message must be from the user." });
         }
 
+        const systemPromptText = systemPrompt ? systemPrompt.content : "You are a helpful assistant.";
+        const systemInstruction = {
+            role: "system",
+            parts: [{ text: systemPromptText }],
+        };
+
         const chat = model.startChat({
             history: history,
             generationConfig: {
                 responseMimeType: "application/json", // Crucial for structured output
                 maxOutputTokens: 2048,
             },
-            // The system instruction is a special field in Gemini
-            systemInstruction: systemPrompt ? systemPrompt.content : "You are a helpful assistant.",
+            systemInstruction: systemInstruction,
         });
 
         const result = await chat.sendMessage(lastMessage.content);
