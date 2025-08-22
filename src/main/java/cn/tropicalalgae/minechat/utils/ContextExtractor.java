@@ -5,7 +5,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.modderg.thedigimod.server.entity.DigimonEntity;
 
 import java.util.stream.Collectors;
 
