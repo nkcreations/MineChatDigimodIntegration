@@ -8,37 +8,6 @@ app.use(express.json());
 const port = process.env.PORT || 3000;
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-app.post('/v1/audio/transcriptions', async (req, res) => {
-    try {
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
-        const audioDataB64 = req.body.audio; // Expecting a base64 string
-
-        if (!audioDataB64) {
-            return res.status(400).json({ error: "Missing audio data." });
-        }
-
-        const contents = [
-            { text: "Generate a transcript of the speech." },
-            {
-                inlineData: {
-                    mimeType: "audio/ogg", // Assuming Opus in OGG container
-                    data: audioDataB64,
-                },
-            },
-        ];
-
-        const result = await model.generateContent({ contents });
-        const response = await result.response;
-        const transcription = response.text();
-
-        res.json({ text: transcription });
-
-    } catch (error) {
-        console.error("Error processing audio request:", error);
-        res.status(500).json({ error: "Internal server error" });
-    }
-});
-
 app.post('/v1/chat/completions', async (req, res) => {
     try {
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
@@ -62,19 +31,14 @@ app.post('/v1/chat/completions', async (req, res) => {
             return res.status(400).json({ error: "Last message must be from the user." });
         }
 
-        const systemPromptText = systemPrompt ? systemPrompt.content : "You are a helpful assistant.";
-        const systemInstruction = {
-            role: "system",
-            parts: [{ text: systemPromptText }],
-        };
-
         const chat = model.startChat({
             history: history,
             generationConfig: {
                 responseMimeType: "application/json", // Crucial for structured output
                 maxOutputTokens: 2048,
             },
-            systemInstruction: systemInstruction,
+            // The system instruction is a special field in Gemini
+            systemInstruction: systemPrompt ? systemPrompt.content : "You are a helpful assistant.",
         });
 
         const result = await chat.sendMessage(lastMessage.content);

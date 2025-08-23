@@ -51,8 +51,8 @@ public class ContextExtractor {
             return "Aldeano";
         }
         if (entity instanceof DigimonEntity) {
-            // This is a placeholder. We'll need a way to get the actual species name.
-            return "Digimon";
+            // Use the entity's name as its species. This should be "Agumon", "Gabumon", etc.
+            return entity.getName().getString();
         }
         return "desconocido";
     }
@@ -69,18 +69,5 @@ public class ContextExtractor {
                     level, hunger, mood, hp, evoLine);
         }
         return "No aplicable";
-    }
-
-    public static String getVillagerProfession(Entity entity) {
-        if (entity instanceof Villager villager) {
-            return villager.getVillagerData().getProfession().toString();
-        }
-        return "No aplicable";
-    }
-
-    public static String getStructureContext(Entity entity) {
-        // We can reuse the EnvironmentScanner logic here.
-        // Let's use a smaller radius for general context.
-        return EnvironmentScanner.findNearestStructure(entity, 128);
     }
 }

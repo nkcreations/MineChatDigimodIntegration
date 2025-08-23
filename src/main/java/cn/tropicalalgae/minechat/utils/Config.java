@@ -36,11 +36,6 @@ public class Config {
     public static ForgeConfigSpec.IntValue THRESHOLD_LOYAL;
 
 
-    public static final ForgeConfigSpec.ConfigValue<String> KEY_OPEN_CHAT_GUI;
-
-    public static ForgeConfigSpec.BooleanValue VOICE_CHAT_INTEGRATION_ENABLED;
-
-
     public enum LLMProvider {
         GEMINI, OPENAI, LOCAL
     }
@@ -153,18 +148,6 @@ public class Config {
                  .comment("Maximum price fluctuation ratio for transaction")
                  .defineInRange("max_cost_adjust_ratio", 0.5f, 0.0f, 1.0f);
 
-        builder.pop();
-
-        builder.comment("Keybind Configuration").push("keybinds");
-        KEY_OPEN_CHAT_GUI = builder
-                .comment("The key to press to open the chat GUI for the entity you are looking at.")
-                .define("key_open_chat", "key.keyboard.6");
-        builder.pop();
-
-        builder.comment("Mod Integrations").push("integrations");
-        VOICE_CHAT_INTEGRATION_ENABLED = builder
-                .comment("Enable integration with Simple Voice Chat mod. Requires the voice chat mod to be installed.")
-                .define("voice_chat_integration_enabled", false);
         builder.pop();
 
         COMMON_CONFIG = builder.build();

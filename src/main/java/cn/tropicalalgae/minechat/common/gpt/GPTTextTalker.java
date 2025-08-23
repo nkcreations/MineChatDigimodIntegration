@@ -21,6 +21,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.modderg.thedigimod.server.entity.DigimonEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -84,31 +85,14 @@ public class GPTTextTalker implements Runnable {
     }
 
     private void initReceiverName() {
+        if (this.receiver instanceof DigimonEntity) {
+            return; // Digimon use their species name, no need to generate one.
+        }
         if (this.receiver.getCustomName() == null) {
-            String rawNameResponse = gptRun(buildEntityNameRequestBody());
-            String finalName = "Villager"; // Default fallback name
-
-            if (rawNameResponse != null && !rawNameResponse.isEmpty()) {
-                try {
-                    // Try to parse as JSON, e.g., {"name":"Sparrow"}
-                    JsonObject jsonObject = JsonParser.parseString(rawNameResponse).getAsJsonObject();
-                    if (jsonObject.has("name")) {
-                        finalName = jsonObject.get("name").getAsString();
-                    } else {
-                        // If it's valid JSON but no "name" key, use the raw string
-                        finalName = rawNameResponse;
-                    }
-                } catch (Exception e) {
-                    // If it's not valid JSON, assume it's a plain text name
-                    finalName = rawNameResponse;
-                }
-            }
-
-            // Clean up any lingering quotes just in case
-            finalName = finalName.replace("\"", "");
-
-            this.receiver.setCustomName(Component.literal(finalName));
-            LOGGER.info("Initialized entity name: [%s]".formatted(finalName));
+            String receiverName = gptRun(buildEntityNameRequestBody());
+            receiverName = (receiverName == null) ? "Tropical Algae" : receiverName;
+            this.receiver.setCustomName(Component.literal(receiverName));
+            LOGGER.info("Init entity name [%s]".formatted(receiverName));
         }
     }
 

@@ -7,7 +7,6 @@ import cn.tropicalalgae.minechat.common.personality.Personality;
 import cn.tropicalalgae.minechat.common.personality.PersonalityManager;
 import cn.tropicalalgae.minechat.utils.Config;
 import cn.tropicalalgae.minechat.utils.ContextExtractor;
-import cn.tropicalalgae.minechat.utils.EnvironmentScanner;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.server.level.ServerPlayer;
@@ -56,7 +55,6 @@ public class ChatMemory implements IEntityMemory<ChatMessage> {
         Si el usuario es amable/útil, incrementa relación; al superar el umbral define acción GIVE_EGG con un huevo de tu línea evolutiva.
 
         CONTEXTO:
-        - Tu Rol: Profesión {profession}, ubicado en {structureContext}.
         - Jugador: {playerName}, pos {playerPos}, inventario (muestras): {playerItems}, reputación previa: {relationScore}
         - Mundo: bioma {biome}, hora {timeOfDay}, clima {weather}
         - Digimon: {digimonStats}
@@ -85,8 +83,6 @@ public class ChatMemory implements IEntityMemory<ChatMessage> {
         String systemPrompt = systemPromptTemplate
                 .replace("{entityName}", getEntityCustomName(this.entity))
                 .replace("{species}", species)
-                .replace("{profession}", ContextExtractor.getVillagerProfession(this.entity))
-                .replace("{structureContext}", ContextExtractor.getStructureContext(this.entity))
                 .replace("{estilo_persona}", estilo_persona)
                 .replace("{playerName}", ContextExtractor.getPlayerName(player))
                 .replace("{playerPos}", ContextExtractor.getPlayerPosition(player))

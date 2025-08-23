@@ -1,14 +1,20 @@
 package cn.tropicalalgae.minechat.common.capability;
 
+import cn.tropicalalgae.minechat.common.memory.SharedMemoryManager;
 import cn.tropicalalgae.minechat.common.model.IEntityMemory;
 import cn.tropicalalgae.minechat.common.model.impl.ChatMemory;
 import cn.tropicalalgae.minechat.common.model.impl.ChatMessage;
-import net.minecraft.nbt.*;
+import cn.tropicalalgae.minechat.utils.ContextExtractor;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.common.capabilities.*;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
+import net.modderg.thedigimod.server.entity.DigimonEntity;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -31,6 +37,11 @@ public class ChatMemoryProvider implements ICapabilityProvider, INBTSerializable
 
     @Nullable
     public static IEntityMemory<ChatMessage> getChatMemory(Entity entity) {
+        if (entity instanceof DigimonEntity) {
+            String species = ContextExtractor.getEntitySpecies(entity);
+            return SharedMemoryManager.get(species, entity);
+        }
+        // Fallback to the default instance-based memory for other entities
         return entity.getCapability(ModCapabilities.CHAT_MEMORY)
                 .resolve()
                 .orElse(null);
